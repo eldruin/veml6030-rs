@@ -22,6 +22,19 @@ pub enum IntegrationTime {
     Ms800,
 }
 
+/// Gain
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum Gain {
+    /// 1/8
+    OneEighth,
+    /// 1/4
+    OneQuarter,
+    /// 1 (default)
+    One,
+    /// 2
+    Two,
+}
+
 /// Possible slave addresses
 #[derive(Debug, Clone, Copy)]
 pub enum SlaveAddr {

@@ -1,4 +1,4 @@
-use {hal, Config, Error, IntegrationTime, SlaveAddr, Veml6030};
+use {hal, Config, Error, Gain, IntegrationTime, SlaveAddr, Veml6030};
 
 struct Register;
 impl Register {
@@ -69,6 +69,18 @@ where
             IntegrationTime::Ms800 => 0b0011,
         };
         let config = self.config.bits & !(0b1111 << 6) | (mask << 6);
+        self.set_config(Config { bits: config })
+    }
+
+    /// Set the gain.
+    pub fn set_gain(&mut self, gain: Gain) -> Result<(), Error<E>> {
+        let mask = match gain {
+            Gain::One => 0,
+            Gain::Two => 1,
+            Gain::OneEighth => 2,
+            Gain::OneQuarter => 3,
+        };
+        let config = self.config.bits & !(0b11 << 11) | mask << 11;
         self.set_config(Config { bits: config })
     }
 

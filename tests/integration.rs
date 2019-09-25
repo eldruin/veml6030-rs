@@ -1,7 +1,7 @@
 extern crate embedded_hal_mock as hal;
 extern crate veml6030;
 use hal::i2c::Transaction as I2cTrans;
-use veml6030::IntegrationTime as IT;
+use veml6030::{Gain, IntegrationTime as IT};
 
 mod common;
 use common::{destroy, new, BitFlags as BF, Register as Reg, CFG_DEFAULT, DEV_ADDR};
@@ -68,4 +68,19 @@ cfg_test!(
     set_integration_time,
     CFG_DEFAULT | (0b0011 << 6),
     IT::Ms800
+);
+
+cfg_test!(set_gain_1, set_gain, CFG_DEFAULT, Gain::One);
+cfg_test!(set_gain_2, set_gain, CFG_DEFAULT | 1 << 11, Gain::Two);
+cfg_test!(
+    set_gain_one_eighth,
+    set_gain,
+    CFG_DEFAULT | 2 << 11,
+    Gain::OneEighth
+);
+cfg_test!(
+    set_gain_one_quarter,
+    set_gain,
+    CFG_DEFAULT | 3 << 11,
+    Gain::OneQuarter
 );
