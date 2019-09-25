@@ -1,4 +1,4 @@
-use {hal, Config, Error, Gain, IntegrationTime, SlaveAddr, Veml6030};
+use {hal, Config, Error, FaultCount, Gain, IntegrationTime, SlaveAddr, Veml6030};
 
 struct Register;
 impl Register {
@@ -85,6 +85,19 @@ where
             Gain::OneQuarter => 3,
         };
         let config = self.config.bits & !(0b11 << 11) | mask << 11;
+        self.set_config(Config { bits: config })
+    }
+
+    /// Set the number of times a threshold crossing must happen consecutively
+    /// to trigger an interrupt.
+    pub fn set_fault_count(&mut self, fc: FaultCount) -> Result<(), Error<E>> {
+        let mask = match fc {
+            FaultCount::One => 0,
+            FaultCount::Two => 1,
+            FaultCount::Four => 2,
+            FaultCount::Eight => 3,
+        };
+        let config = self.config.bits & !(0b11 << 4) | mask << 4;
         self.set_config(Config { bits: config })
     }
 

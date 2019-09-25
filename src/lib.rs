@@ -39,7 +39,7 @@ extern crate embedded_hal as hal;
 
 mod device_impl;
 mod types;
-pub use types::{Error, Gain, IntegrationTime, SlaveAddr};
+pub use types::{Error, FaultCount, Gain, IntegrationTime, SlaveAddr};
 
 /// VEML6030 device driver
 #[derive(Debug)]

@@ -35,6 +35,22 @@ pub enum Gain {
     Two,
 }
 
+/// Fault count
+///
+/// Number of consecutive fault events necessary to trigger interrupt.
+/// This is referred to as "persistence" in the documentation.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum FaultCount {
+    /// One (default)
+    One,
+    /// Two
+    Two,
+    /// Four
+    Four,
+    /// Eight
+    Eight,
+}
+
 /// Possible slave addresses
 #[derive(Debug, Clone, Copy)]
 pub enum SlaveAddr {
