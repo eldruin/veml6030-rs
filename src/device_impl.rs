@@ -8,6 +8,7 @@ impl Register {
 struct BitFlags;
 impl BitFlags {
     const ALS_SD: u16 = 0x01;
+    const ALS_INT_EN: u16 = 0x02;
 }
 
 impl Config {
@@ -54,6 +55,18 @@ where
     /// Disable the device (shutdown).
     pub fn disable(&mut self) -> Result<(), Error<E>> {
         let config = self.config.with_high(BitFlags::ALS_SD);
+        self.set_config(config)
+    }
+
+    /// Enable interrupt generation.
+    pub fn enable_interrupts(&mut self) -> Result<(), Error<E>> {
+        let config = self.config.with_high(BitFlags::ALS_INT_EN);
+        self.set_config(config)
+    }
+
+    /// Disable interrupt generation.
+    pub fn disable_interrupts(&mut self) -> Result<(), Error<E>> {
+        let config = self.config.with_low(BitFlags::ALS_INT_EN);
         self.set_config(config)
     }
 

@@ -3,7 +3,7 @@ extern crate veml6030;
 use hal::i2c::Transaction as I2cTrans;
 
 mod common;
-use common::{destroy, new, BitFlags as BF, Register as Reg, DEV_ADDR};
+use common::{destroy, new, BitFlags as BF, Register as Reg, CFG_DEFAULT, DEV_ADDR};
 
 #[test]
 fn can_create_and_destroy() {
@@ -34,3 +34,5 @@ macro_rules! cfg_test {
 
 cfg_test!(enable, enable, 0);
 cfg_test!(disable, disable, BF::ALS_SD);
+cfg_test!(enable_int, enable_interrupts, CFG_DEFAULT | BF::ALS_INT_EN);
+cfg_test!(disable_int, disable_interrupts, CFG_DEFAULT);
