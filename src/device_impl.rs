@@ -47,6 +47,10 @@ where
     I2C: hal::blocking::i2c::Write<Error = E>,
 {
     /// Enable the device.
+    ///
+    /// Note that when activating the sensor a wait time of 4 ms should be
+    /// observed before the first measurement is picked up to allow for a
+    /// correct start of the signal processor and oscillator.
     pub fn enable(&mut self) -> Result<(), Error<E>> {
         let config = self.config.with_low(BitFlags::ALS_SD);
         self.set_config(config)
