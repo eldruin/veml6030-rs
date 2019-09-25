@@ -1,6 +1,7 @@
 extern crate embedded_hal_mock as hal;
 extern crate veml6030;
 use hal::i2c::Transaction as I2cTrans;
+use veml6030::IntegrationTime as IT;
 
 mod common;
 use common::{destroy, new, BitFlags as BF, Register as Reg, CFG_DEFAULT, DEV_ADDR};
@@ -36,3 +37,35 @@ cfg_test!(enable, enable, 0);
 cfg_test!(disable, disable, BF::ALS_SD);
 cfg_test!(enable_int, enable_interrupts, CFG_DEFAULT | BF::ALS_INT_EN);
 cfg_test!(disable_int, disable_interrupts, CFG_DEFAULT);
+
+cfg_test!(
+    set_it_25,
+    set_integration_time,
+    CFG_DEFAULT | (0b1100 << 6),
+    IT::Ms25
+);
+cfg_test!(
+    set_it_50,
+    set_integration_time,
+    CFG_DEFAULT | (0b1000 << 6),
+    IT::Ms50
+);
+cfg_test!(set_it_100, set_integration_time, CFG_DEFAULT, IT::Ms100);
+cfg_test!(
+    set_it_200,
+    set_integration_time,
+    CFG_DEFAULT | (0b0001 << 6),
+    IT::Ms200
+);
+cfg_test!(
+    set_it_400,
+    set_integration_time,
+    CFG_DEFAULT | (0b0010 << 6),
+    IT::Ms400
+);
+cfg_test!(
+    set_it_800,
+    set_integration_time,
+    CFG_DEFAULT | (0b0011 << 6),
+    IT::Ms800
+);

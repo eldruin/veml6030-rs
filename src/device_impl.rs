@@ -1,4 +1,4 @@
-use {hal, Config, Error, SlaveAddr, Veml6030};
+use {hal, Config, Error, IntegrationTime, SlaveAddr, Veml6030};
 
 struct Register;
 impl Register {
@@ -56,6 +56,20 @@ where
     pub fn disable(&mut self) -> Result<(), Error<E>> {
         let config = self.config.with_high(BitFlags::ALS_SD);
         self.set_config(config)
+    }
+
+    /// Set the integration time.
+    pub fn set_integration_time(&mut self, it: IntegrationTime) -> Result<(), Error<E>> {
+        let mask = match it {
+            IntegrationTime::Ms25 => 0b1100,
+            IntegrationTime::Ms50 => 0b1000,
+            IntegrationTime::Ms100 => 0b0000,
+            IntegrationTime::Ms200 => 0b0001,
+            IntegrationTime::Ms400 => 0b0010,
+            IntegrationTime::Ms800 => 0b0011,
+        };
+        let config = self.config.bits & !(0b1111 << 6) | (mask << 6);
+        self.set_config(Config { bits: config })
     }
 
     /// Enable interrupt generation.

@@ -5,6 +5,23 @@ pub enum Error<E> {
     I2C(E),
 }
 
+/// Integration time
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum IntegrationTime {
+    /// 25 ms
+    Ms25,
+    /// 50 ms
+    Ms50,
+    /// 100 ms (default)
+    Ms100,
+    /// 200 ms
+    Ms200,
+    /// 400 ms
+    Ms400,
+    /// 800 ms
+    Ms800,
+}
+
 /// Possible slave addresses
 #[derive(Debug, Clone, Copy)]
 pub enum SlaveAddr {
