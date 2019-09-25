@@ -1,7 +1,7 @@
 extern crate embedded_hal_mock as hal;
 extern crate veml6030;
 use hal::i2c::Transaction as I2cTrans;
-use veml6030::{FaultCount as FC, Gain, IntegrationTime as IT};
+use veml6030::{FaultCount as FC, Gain, IntegrationTime as IT, PowerSavingMode as PSM};
 
 mod common;
 use common::{destroy, new, BitFlags as BF, Register as Reg, CFG_DEFAULT, DEV_ADDR};
@@ -89,3 +89,27 @@ cfg_test!(set_fc_1, set_fault_count, CFG_DEFAULT, FC::One);
 cfg_test!(set_fc_2, set_fault_count, CFG_DEFAULT | 1 << 4, FC::Two);
 cfg_test!(set_fc_4, set_fault_count, CFG_DEFAULT | 2 << 4, FC::Four);
 cfg_test!(set_fc_8, set_fault_count, CFG_DEFAULT | 3 << 4, FC::Eight);
+
+set_test!(enable_psm_1, enable_power_saving, PSM, BF::PSM_EN, PSM::One);
+set_test!(
+    enable_psm_2,
+    enable_power_saving,
+    PSM,
+    BF::PSM_EN | 1 << 1,
+    PSM::Two
+);
+set_test!(
+    enable_psm_3,
+    enable_power_saving,
+    PSM,
+    BF::PSM_EN | 2 << 1,
+    PSM::Three
+);
+set_test!(
+    enable_psm_4,
+    enable_power_saving,
+    PSM,
+    BF::PSM_EN | 3 << 1,
+    PSM::Four
+);
+set_test!(disable_psm, disable_power_saving, PSM, 0);

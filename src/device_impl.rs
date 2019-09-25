@@ -1,14 +1,16 @@
-use {hal, Config, Error, FaultCount, Gain, IntegrationTime, SlaveAddr, Veml6030};
+use {hal, Config, Error, FaultCount, Gain, IntegrationTime, PowerSavingMode, SlaveAddr, Veml6030};
 
 struct Register;
 impl Register {
     const ALS_CONF: u8 = 0x00;
+    const PSM: u8 = 0x03;
 }
 
 struct BitFlags;
 impl BitFlags {
     const ALS_SD: u16 = 0x01;
     const ALS_INT_EN: u16 = 0x02;
+    const PSM_EN: u16 = 0x01;
 }
 
 impl Config {
@@ -111,6 +113,23 @@ where
     pub fn disable_interrupts(&mut self) -> Result<(), Error<E>> {
         let config = self.config.with_low(BitFlags::ALS_INT_EN);
         self.set_config(config)
+    }
+
+    /// Enable the power-saving mode
+    pub fn enable_power_saving(&mut self, psm: PowerSavingMode) -> Result<(), Error<E>> {
+        let mask = match psm {
+            PowerSavingMode::One => 0,
+            PowerSavingMode::Two => 1,
+            PowerSavingMode::Three => 2,
+            PowerSavingMode::Four => 3,
+        };
+        let value = BitFlags::PSM_EN | mask << 1;
+        self.write_register(Register::PSM, value)
+    }
+
+    /// Disable the power-saving mode
+    pub fn disable_power_saving(&mut self) -> Result<(), Error<E>> {
+        self.write_register(Register::PSM, 0)
     }
 
     fn set_config(&mut self, config: Config) -> Result<(), Error<E>> {

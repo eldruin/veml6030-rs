@@ -51,6 +51,22 @@ pub enum FaultCount {
     Eight,
 }
 
+/// Power-saving mode
+///
+/// This combined with the integration time determines the repetition rate
+/// and the power consumption of the device.
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub enum PowerSavingMode {
+    /// One
+    One,
+    /// Two
+    Two,
+    /// Three
+    Three,
+    /// Four
+    Four,
+}
+
 /// Possible slave addresses
 #[derive(Debug, Clone, Copy)]
 pub enum SlaveAddr {
