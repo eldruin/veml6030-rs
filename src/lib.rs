@@ -35,3 +35,22 @@
 #![deny(unsafe_code, missing_docs)]
 #![no_std]
 
+extern crate embedded_hal as hal;
+
+mod device_impl;
+mod types;
+pub use types::{Error, SlaveAddr};
+
+/// VEML6030 device driver
+#[derive(Debug)]
+pub struct Veml6030<I2C> {
+    /// The concrete I²C device implementation.
+    i2c: I2C,
+    address: u8,
+    config: Config,
+}
+
+#[derive(Debug, Default, Clone, Copy, PartialEq)]
+struct Config {
+    bits: u16,
+}
