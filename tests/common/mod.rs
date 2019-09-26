@@ -8,6 +8,7 @@ pub struct Register;
 impl Register {
     pub const ALS_CONF: u8 = 0x00;
     pub const PSM: u8 = 0x03;
+    pub const ALS: u8 = 0x04;
     pub const ALS_INT: u8 = 0x06;
 }
 

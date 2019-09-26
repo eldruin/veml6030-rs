@@ -173,3 +173,4 @@ get_test!(
         was_too_high: true
     }
 );
+get_test!(read_als_raw, read_raw, ALS, 0xABCD_u16, 0xABCD);

@@ -7,6 +7,7 @@ struct Register;
 impl Register {
     const ALS_CONF: u8 = 0x00;
     const PSM: u8 = 0x03;
+    const ALS: u8 = 0x04;
     const ALS_INT: u8 = 0x06;
 }
 
@@ -166,6 +167,11 @@ where
             was_too_low: (data & BitFlags::INT_TH_LOW) != 0,
             was_too_high: (data & BitFlags::INT_TH_HIGH) != 0,
         })
+    }
+
+    /// Read ALS high resolution output data in raw format
+    pub fn read_raw(&mut self) -> Result<u16, Error<E>> {
+        self.read_register(Register::ALS)
     }
 
     fn read_register(&mut self, register: u8) -> Result<u16, Error<E>> {
