@@ -1,7 +1,9 @@
 extern crate embedded_hal_mock as hal;
 extern crate veml6030;
 use hal::i2c::Transaction as I2cTrans;
-use veml6030::{FaultCount as FC, Gain, IntegrationTime as IT, PowerSavingMode as PSM};
+use veml6030::{
+    FaultCount as FC, Gain, IntegrationTime as IT, InterruptStatus, PowerSavingMode as PSM,
+};
 
 mod common;
 use common::{destroy, new, BitFlags as BF, Register as Reg, CFG_DEFAULT, DEV_ADDR};
@@ -113,3 +115,61 @@ set_test!(
     PSM::Four
 );
 set_test!(disable_psm, disable_power_saving, PSM, 0);
+
+macro_rules! get_test {
+    ($name:ident, $method:ident, $register:ident, $value:expr, $expected:expr) => {
+        #[test]
+        fn $name() {
+            let transactions = [I2cTrans::write_read(
+                DEV_ADDR,
+                vec![Reg::$register],
+                vec![$value as u8, ($value >> 8) as u8],
+            )];
+            let mut sensor = new(&transactions);
+            let result = sensor.$method().unwrap();
+            assert_eq!($expected, result);
+            destroy(sensor);
+        }
+    };
+}
+
+get_test!(
+    int_status_none,
+    get_interrupt_status,
+    ALS_INT,
+    0,
+    InterruptStatus {
+        was_too_low: false,
+        was_too_high: false
+    }
+);
+get_test!(
+    int_status_too_low,
+    get_interrupt_status,
+    ALS_INT,
+    BF::INT_TH_LOW,
+    InterruptStatus {
+        was_too_low: true,
+        was_too_high: false
+    }
+);
+get_test!(
+    int_status_too_high,
+    get_interrupt_status,
+    ALS_INT,
+    BF::INT_TH_HIGH,
+    InterruptStatus {
+        was_too_low: false,
+        was_too_high: true
+    }
+);
+get_test!(
+    int_status_both,
+    get_interrupt_status,
+    ALS_INT,
+    BF::INT_TH_HIGH | BF::INT_TH_LOW,
+    InterruptStatus {
+        was_too_low: true,
+        was_too_high: true
+    }
+);

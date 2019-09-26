@@ -8,6 +8,7 @@ pub struct Register;
 impl Register {
     pub const ALS_CONF: u8 = 0x00;
     pub const PSM: u8 = 0x03;
+    pub const ALS_INT: u8 = 0x06;
 }
 
 pub struct BitFlags;
@@ -15,6 +16,8 @@ impl BitFlags {
     pub const ALS_SD: u16 = 0x01;
     pub const ALS_INT_EN: u16 = 0x02;
     pub const PSM_EN: u16 = 0x01;
+    pub const INT_TH_LOW: u16 = 1 << 15;
+    pub const INT_TH_HIGH: u16 = 1 << 14;
 }
 
 pub fn new(transactions: &[I2cTrans]) -> Veml6030<I2cMock> {

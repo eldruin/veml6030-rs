@@ -67,6 +67,17 @@ pub enum PowerSavingMode {
     Four,
 }
 
+/// Interrupt status
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct InterruptStatus {
+    /// Whether the low threshold was exceeded consecutively as many times
+    /// as configured as fault count.
+    pub was_too_low: bool,
+    /// Whether the high threshold was exceeded consecutively as many times
+    /// as configured as fault count.
+    pub was_too_high: bool,
+}
+
 /// Possible slave addresses
 #[derive(Debug, Clone, Copy)]
 pub enum SlaveAddr {

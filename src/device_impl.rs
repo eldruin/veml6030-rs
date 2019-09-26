@@ -1,9 +1,13 @@
-use {hal, Config, Error, FaultCount, Gain, IntegrationTime, PowerSavingMode, SlaveAddr, Veml6030};
+use {
+    hal, Config, Error, FaultCount, Gain, IntegrationTime, InterruptStatus, PowerSavingMode,
+    SlaveAddr, Veml6030,
+};
 
 struct Register;
 impl Register {
     const ALS_CONF: u8 = 0x00;
     const PSM: u8 = 0x03;
+    const ALS_INT: u8 = 0x06;
 }
 
 struct BitFlags;
@@ -11,6 +15,8 @@ impl BitFlags {
     const ALS_SD: u16 = 0x01;
     const ALS_INT_EN: u16 = 0x02;
     const PSM_EN: u16 = 0x01;
+    const INT_TH_LOW: u16 = 1 << 15;
+    const INT_TH_HIGH: u16 = 1 << 14;
 }
 
 impl Config {
@@ -142,5 +148,31 @@ where
         self.i2c
             .write(self.address, &[register, value as u8, (value >> 8) as u8])
             .map_err(Error::I2C)
+    }
+}
+
+impl<I2C, E> Veml6030<I2C>
+where
+    I2C: hal::blocking::i2c::WriteRead<Error = E>,
+{
+    /// Read whether an interrupt has occurred.
+    ///
+    /// Note that the interrupt status is updated at the same rate as the
+    /// measurements. Once triggered, flags will stay true until a measurement
+    /// is taken which does not exceed the threshold.
+    pub fn get_interrupt_status(&mut self) -> Result<InterruptStatus, Error<E>> {
+        let data = self.read_register(Register::ALS_INT)?;
+        Ok(InterruptStatus {
+            was_too_low: (data & BitFlags::INT_TH_LOW) != 0,
+            was_too_high: (data & BitFlags::INT_TH_HIGH) != 0,
+        })
+    }
+
+    fn read_register(&mut self, register: u8) -> Result<u16, Error<E>> {
+        let mut data = [0; 2];
+        self.i2c
+            .write_read(self.address, &[register], &mut data)
+            .map_err(Error::I2C)
+            .and(Ok(u16::from(data[0]) | u16::from(data[1]) << 8))
     }
 }
