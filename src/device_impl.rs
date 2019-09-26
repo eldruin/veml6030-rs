@@ -8,6 +8,7 @@ impl Register {
     const ALS_CONF: u8 = 0x00;
     const PSM: u8 = 0x03;
     const ALS: u8 = 0x04;
+    const WHITE: u8 = 0x05;
     const ALS_INT: u8 = 0x06;
 }
 
@@ -172,6 +173,11 @@ where
     /// Read ALS high resolution output data in raw format
     pub fn read_raw(&mut self) -> Result<u16, Error<E>> {
         self.read_register(Register::ALS)
+    }
+
+    /// Read white channel measurement
+    pub fn read_white(&mut self) -> Result<u16, Error<E>> {
+        self.read_register(Register::WHITE)
     }
 
     fn read_register(&mut self, register: u8) -> Result<u16, Error<E>> {

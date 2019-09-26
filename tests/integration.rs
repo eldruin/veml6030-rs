@@ -174,3 +174,4 @@ get_test!(
     }
 );
 get_test!(read_als_raw, read_raw, ALS, 0xABCD_u16, 0xABCD);
+get_test!(read_white, read_white, WHITE, 0xABCD_u16, 0xABCD);
