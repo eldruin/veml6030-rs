@@ -175,3 +175,88 @@ get_test!(
 );
 get_test!(read_als_raw, read_raw, ALS, 0xABCD_u16, 0xABCD);
 get_test!(read_white, read_white, WHITE, 0xABCD_u16, 0xABCD);
+
+macro_rules! read_lux_test {
+    ($name:ident, $it:ident, $gain:ident, $config1:expr, $config2:expr, $als:expr, $expected:expr) => {
+        #[test]
+        fn $name() {
+            let transactions = [
+                I2cTrans::write(
+                    DEV_ADDR,
+                    vec![Reg::ALS_CONF, $config1 as u8, ($config1 >> 8) as u8],
+                ),
+                I2cTrans::write(
+                    DEV_ADDR,
+                    vec![Reg::ALS_CONF, $config2 as u8, ($config2 >> 8) as u8],
+                ),
+                I2cTrans::write_read(
+                    DEV_ADDR,
+                    vec![Reg::ALS],
+                    vec![$als as u8, ($als >> 8) as u8],
+                ),
+            ];
+            let mut sensor = new(&transactions);
+            sensor.set_integration_time(IT::$it).unwrap();
+            sensor.set_gain(Gain::$gain).unwrap();
+            let result = sensor.read_lux().unwrap();
+            assert!($expected - 0.5 < result);
+            assert!($expected + 0.5 > result);
+            destroy(sensor);
+        }
+    };
+}
+
+read_lux_test!(
+    it100g14,
+    Ms100,
+    OneQuarter,
+    CFG_DEFAULT,
+    CFG_DEFAULT | 3 << 11,
+    1480_u16,
+    341.0
+);
+read_lux_test!(
+    min,
+    Ms800,
+    Two,
+    CFG_DEFAULT | (0b0011 << 6),
+    CFG_DEFAULT | (0b0011 << 6) | 1 << 11,
+    1480_u16,
+    5.328
+);
+read_lux_test!(
+    max_applies_correction,
+    Ms25,
+    OneEighth,
+    CFG_DEFAULT | (0b1100 << 6),
+    CFG_DEFAULT | (0b1100 << 6) | 2 << 11,
+    1480_u16,
+    3183.247
+);
+read_lux_test!(
+    it50g1,
+    Ms50,
+    One,
+    CFG_DEFAULT | (0b1000 << 6),
+    CFG_DEFAULT | (0b1000 << 6),
+    1480_u16,
+    170.496
+);
+read_lux_test!(
+    it200g14,
+    Ms200,
+    OneQuarter,
+    CFG_DEFAULT | (0b0001 << 6),
+    CFG_DEFAULT | (0b0001 << 6) | 3 << 11,
+    1480_u16,
+    170.496
+);
+read_lux_test!(
+    it400g18,
+    Ms400,
+    OneEighth,
+    CFG_DEFAULT | (0b0010 << 6),
+    CFG_DEFAULT | (0b0010 << 6) | 2 << 11,
+    1480_u16,
+    170.496
+);

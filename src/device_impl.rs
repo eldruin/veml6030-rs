@@ -43,6 +43,8 @@ impl<I2C> Veml6030<I2C> {
             config: Config {
                 bits: BitFlags::ALS_SD,
             },
+            gain: Gain::One,
+            it: IntegrationTime::Ms100,
         }
     }
 
@@ -83,7 +85,9 @@ where
             IntegrationTime::Ms800 => 0b0011,
         };
         let config = self.config.bits & !(0b1111 << 6) | (mask << 6);
-        self.set_config(Config { bits: config })
+        self.set_config(Config { bits: config })?;
+        self.it = it;
+        Ok(())
     }
 
     /// Set the gain.
@@ -95,7 +99,9 @@ where
             Gain::OneQuarter => 3,
         };
         let config = self.config.bits & !(0b11 << 11) | mask << 11;
-        self.set_config(Config { bits: config })
+        self.set_config(Config { bits: config })?;
+        self.gain = gain;
+        Ok(())
     }
 
     /// Set the number of times a threshold crossing must happen consecutively
@@ -175,6 +181,35 @@ where
         self.read_register(Register::ALS)
     }
 
+    /// Read ALS high resolution output data converted to lux
+    ///
+    /// For values higher than 1000 lx and 1/4 or 1/8 gain,
+    /// the following compensation formula is applied:
+    /// `lux = 6.0135e-13*(lux^4) - 9.3924e-9*(lux^3) + 8.1488e-5*(lux^2) + 1.0023*lux`
+    pub fn read_lux(&mut self) -> Result<f32, Error<E>> {
+        let raw = self.read_register(Register::ALS)?;
+        let gain_factor = match self.gain {
+            Gain::Two => 1.0,
+            Gain::One => 2.0,
+            Gain::OneQuarter => 8.0,
+            Gain::OneEighth => 16.0,
+        };
+        let it_factor = match self.it {
+            IntegrationTime::Ms800 => 0.0036,
+            IntegrationTime::Ms400 => 0.0072,
+            IntegrationTime::Ms200 => 0.0144,
+            IntegrationTime::Ms100 => 0.0288,
+            IntegrationTime::Ms50 => 0.0576,
+            IntegrationTime::Ms25 => 0.1152,
+        };
+        let lux = f64::from(raw) * it_factor * gain_factor;
+        if (self.gain == Gain::OneQuarter || self.gain == Gain::OneEighth) && lux > 1000.0 {
+            Ok(correct_high_lux(lux) as f32)
+        } else {
+            Ok(lux as f32)
+        }
+    }
+
     /// Read white channel measurement
     pub fn read_white(&mut self) -> Result<u16, Error<E>> {
         self.read_register(Register::WHITE)
@@ -187,4 +222,12 @@ where
             .map_err(Error::I2C)
             .and(Ok(u16::from(data[0]) | u16::from(data[1]) << 8))
     }
+}
+
+fn correct_high_lux(lux: f64) -> f64 {
+    const C0: f64 = 1.0023;
+    const C1: f64 = 8.1488e-05;
+    const C2: f64 = 9.3924e-09;
+    const C3: f64 = 6.0135e-13;
+    lux * lux * lux * lux * C3 - lux * lux * lux * C2 + lux * lux * C1 + lux * C0
 }

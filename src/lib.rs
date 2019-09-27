@@ -50,6 +50,8 @@ pub struct Veml6030<I2C> {
     i2c: I2C,
     address: u8,
     config: Config,
+    gain: Gain,
+    it: IntegrationTime,
 }
 
 #[derive(Debug, Default, Clone, Copy, PartialEq)]
