@@ -135,7 +135,7 @@ macro_rules! get_test {
 
 get_test!(
     int_status_none,
-    get_interrupt_status,
+    read_interrupt_status,
     ALS_INT,
     0,
     InterruptStatus {
@@ -145,7 +145,7 @@ get_test!(
 );
 get_test!(
     int_status_too_low,
-    get_interrupt_status,
+    read_interrupt_status,
     ALS_INT,
     BF::INT_TH_LOW,
     InterruptStatus {
@@ -155,7 +155,7 @@ get_test!(
 );
 get_test!(
     int_status_too_high,
-    get_interrupt_status,
+    read_interrupt_status,
     ALS_INT,
     BF::INT_TH_HIGH,
     InterruptStatus {
@@ -165,7 +165,7 @@ get_test!(
 );
 get_test!(
     int_status_both,
-    get_interrupt_status,
+    read_interrupt_status,
     ALS_INT,
     BF::INT_TH_HIGH | BF::INT_TH_LOW,
     InterruptStatus {

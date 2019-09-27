@@ -162,7 +162,7 @@ where
     /// Note that the interrupt status is updated at the same rate as the
     /// measurements. Once triggered, flags will stay true until a measurement
     /// is taken which does not exceed the threshold.
-    pub fn get_interrupt_status(&mut self) -> Result<InterruptStatus, Error<E>> {
+    pub fn read_interrupt_status(&mut self) -> Result<InterruptStatus, Error<E>> {
         let data = self.read_register(Register::ALS_INT)?;
         Ok(InterruptStatus {
             was_too_low: (data & BitFlags::INT_TH_LOW) != 0,
