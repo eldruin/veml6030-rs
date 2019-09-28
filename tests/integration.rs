@@ -260,3 +260,18 @@ read_lux_test!(
     1480_u16,
     170.496
 );
+
+set_test!(
+    high_th_raw,
+    set_high_threshold_raw,
+    ALS_WH,
+    0xABCD_u16,
+    0xABCD
+);
+set_test!(
+    low_th_raw,
+    set_low_threshold_raw,
+    ALS_WL,
+    0xABCD_u16,
+    0xABCD
+);

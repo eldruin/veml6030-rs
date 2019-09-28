@@ -6,6 +6,8 @@ use {
 struct Register;
 impl Register {
     const ALS_CONF: u8 = 0x00;
+    const ALS_WH: u8 = 0x01;
+    const ALS_WL: u8 = 0x02;
     const PSM: u8 = 0x03;
     const ALS: u8 = 0x04;
     const WHITE: u8 = 0x05;
@@ -127,6 +129,16 @@ where
     pub fn disable_interrupts(&mut self) -> Result<(), Error<E>> {
         let config = self.config.with_low(BitFlags::ALS_INT_EN);
         self.set_config(config)
+    }
+
+    /// Set the ALS high threshold in raw format
+    pub fn set_high_threshold_raw(&mut self, threshold: u16) -> Result<(), Error<E>> {
+        self.write_register(Register::ALS_WH, threshold)
+    }
+
+    /// Set the ALS low threshold in raw format
+    pub fn set_low_threshold_raw(&mut self, threshold: u16) -> Result<(), Error<E>> {
+        self.write_register(Register::ALS_WL, threshold)
     }
 
     /// Enable the power-saving mode

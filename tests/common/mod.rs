@@ -7,6 +7,8 @@ pub const CFG_DEFAULT: u16 = BitFlags::ALS_SD;
 pub struct Register;
 impl Register {
     pub const ALS_CONF: u8 = 0x00;
+    pub const ALS_WH: u8 = 0x01;
+    pub const ALS_WL: u8 = 0x02;
     pub const PSM: u8 = 0x03;
     pub const ALS: u8 = 0x04;
     pub const WHITE: u8 = 0x05;
