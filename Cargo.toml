@@ -25,6 +25,7 @@ coveralls = { repository = "eldruin/veml6030-rs", branch = "master", service = "
 
 [dependencies]
 embedded-hal = "0.2"
+libm = "0.1"
 
 [dev-dependencies]
 linux-embedded-hal = "0.2"

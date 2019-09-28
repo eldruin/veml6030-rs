@@ -36,8 +36,11 @@
 #![no_std]
 
 extern crate embedded_hal as hal;
+extern crate libm;
 
+mod correction;
 mod device_impl;
+pub use correction::calculate_raw_threshold_value;
 mod types;
 pub use types::{
     Error, FaultCount, Gain, IntegrationTime, InterruptStatus, PowerSavingMode, SlaveAddr,

@@ -207,6 +207,15 @@ macro_rules! read_lux_test {
 }
 
 read_lux_test!(
+    it100g1,
+    Ms100,
+    One,
+    CFG_DEFAULT,
+    CFG_DEFAULT,
+    1480_u16,
+    85.248
+);
+read_lux_test!(
     it100g14,
     Ms100,
     OneQuarter,
@@ -274,4 +283,47 @@ set_test!(
     ALS_WL,
     0xABCD_u16,
     0xABCD
+);
+set_test!(highth_lux, set_high_threshold_lux, ALS_WH, 1480_u16, 85.248);
+set_test!(low_th_lux, set_low_threshold_lux, ALS_WL, 1480_u16, 85.248);
+
+macro_rules! set_th_test {
+    ($name:ident, $method:ident, $register:ident) => {
+        #[test]
+        fn $name() {
+            let config1 = CFG_DEFAULT | (0b1100 << 6);
+            let config2 = config1 | 2 << 11;
+            let als_raw = 1479;
+            let transactions = [
+                I2cTrans::write(
+                    DEV_ADDR,
+                    vec![Reg::ALS_CONF, config1 as u8, (config1 >> 8) as u8],
+                ),
+                I2cTrans::write(
+                    DEV_ADDR,
+                    vec![Reg::ALS_CONF, config2 as u8, (config2 >> 8) as u8],
+                ),
+                I2cTrans::write(
+                    DEV_ADDR,
+                    vec![Reg::$register, als_raw as u8, (als_raw >> 8) as u8],
+                ),
+            ];
+            let mut sensor = new(&transactions);
+            sensor.set_integration_time(IT::Ms25).unwrap();
+            sensor.set_gain(Gain::OneEighth).unwrap();
+            sensor.$method(3183.247).unwrap();
+            destroy(sensor);
+        }
+    };
+}
+
+set_th_test!(
+    high_th_lux_applies_compensation,
+    set_high_threshold_lux,
+    ALS_WH
+);
+set_th_test!(
+    low_th_lux_applies_compensation,
+    set_low_threshold_lux,
+    ALS_WL
 );
