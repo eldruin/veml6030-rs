@@ -10,9 +10,19 @@
 This is a platform agnostic Rust driver for the VEML6030 high accuracy ambient
 light sensor using the [`embedded-hal`] traits.
 
-<!-- TODO
 This driver allows you to:
--->
+- Enable/disable the device. See: `enable()`.
+- Read the measured lux value. See: `read_lux()`.
+- Read the white channel measurment. See: `read_white()`.
+- Set the gain. See: `set_gain()`.
+- Set the integration time. See: `set_integration_time()`.
+- Set the fault count. See: `set_fault_count()`.
+- Enable/disable and configure power saving mode. See: `enable_power_saving()`.
+- Enable/disable interrupts. See: `enable_interrupts()`.
+- Read the interrupt status. See: `read_interrupt_status()`.
+- Set the high/low thresholds in lux or raw. See: `set_high_threshold_lux()`.
+- Calculate the compensated raw threshold value ahead of time. See: `calculate_raw_threshold_value()`.
+
 <!-- TODO
 [Introductory blog post]()
 -->

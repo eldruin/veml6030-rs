@@ -4,13 +4,35 @@
 //! [`embedded-hal`]: https://github.com/rust-embedded/embedded-hal
 //!
 //! This driver allows you to:
-//! - TODO
+//! - Enable/disable the device. See: [`enable()`].
+//! - Read the measured lux value. See: [`read_lux()`].
+//! - Read the white channel measurment. See: [`read_white()`].
+//! - Set the gain. See: [`set_gain()`].
+//! - Set the integration time. See: [`set_integration_time()`].
+//! - Set the fault count. See: [`set_fault_count()`].
+//! - Enable/disable and configure power saving mode. See: [`enable_power_saving()`].
+//! - Enable/disable interrupts. See: [`enable_interrupts()`].
+//! - Read the interrupt status. See: [`read_interrupt_status()`].
+//! - Set the high/low thresholds in lux or raw. See: [`set_high_threshold_lux()`].
+//! - Calculate the compensated raw threshold value ahead of time. See: [`calculate_raw_threshold_value()`].
+//!
+//! [`enable()`]: struct.Veml6030.html#method.enable
+//! [`read_lux()`]: struct.Veml6030.html#method.read_lux
+//! [`read_white()`]: struct.Veml6030.html#method.read_white
+//! [`set_gain()`]: struct.Veml6030.html#method.set_gain
+//! [`set_integration_time()`]: struct.Veml6030.html#method.set_integration_time
+//! [`set_fault_count()`]: struct.Veml6030.html#method.set_fault_count
+//! [`enable_power_saving()`]: struct.Veml6030.html#method.enable_power_saving
+//! [`enable_interrupts()`]: struct.Veml6030.html#method.enable_interrupts
+//! [`read_interrupt_status()`]: struct.Veml6030.html#method.read_interrupt_status
+//! [`set_high_threshold_lux()`]: struct.Veml6030.html#method.set_high_threshold_lux
+//! [`calculate_raw_threshold_value()`]: fn.calculate_raw_threshold_value.html
 //!
 //! [Introductory blog post](TODO)
 //!
 //! ## The devices
 //!
-//!VEML6030 is a high accuracy ambient light digital 16-bit resolution sensor in
+//! VEML6030 is a high accuracy ambient light digital 16-bit resolution sensor in
 //! a miniature transparent 2mm x 2mm package. It includes a high sensitive
 //! photodiode, a low noise amplifier, a 16-bit A/D converter and supports an easy
 //! to use I2C bus communication interface and additional interrupt feature.
