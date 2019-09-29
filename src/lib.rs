@@ -6,7 +6,9 @@
 //! This driver allows you to:
 //! - Enable/disable the device. See: [`enable()`].
 //! - Read the measured lux value. See: [`read_lux()`].
-//! - Read the white channel measurment. See: [`read_white()`].
+//! - Read the white channel measurement. See: [`read_white()`].
+//! - Read the measured ALS value in raw format. See: [`read_raw()`].
+//! - Calculate the compensated lux for a raw ALS value. See: [`convert_raw_als_to_lux()`].
 //! - Set the gain. See: [`set_gain()`].
 //! - Set the integration time. See: [`set_integration_time()`].
 //! - Set the fault count. See: [`set_fault_count()`].
@@ -19,6 +21,8 @@
 //! [`enable()`]: struct.Veml6030.html#method.enable
 //! [`read_lux()`]: struct.Veml6030.html#method.read_lux
 //! [`read_white()`]: struct.Veml6030.html#method.read_white
+//! [`read_raw()`]: struct.Veml6030.html#method.read_raw
+//! [`convert_raw_als_to_lux()`]: fn.convert_raw_als_to_lux.html
 //! [`set_gain()`]: struct.Veml6030.html#method.set_gain
 //! [`set_integration_time()`]: struct.Veml6030.html#method.set_integration_time
 //! [`set_fault_count()`]: struct.Veml6030.html#method.set_fault_count
@@ -165,7 +169,7 @@
 //!
 //! ### Precalculate and set compensated threshold values
 //!
-//! With free function
+//! Using free function
 //!
 //! ```no_run
 //! extern crate linux_embedded_hal as hal;
@@ -214,6 +218,57 @@
 //! }
 //! # }
 //! ```
+//!
+//! ### Read the raw ALS measurement and convert to lux separately
+//!
+//! Using current device configuration
+//!
+//! ```no_run
+//! extern crate linux_embedded_hal as hal;
+//! extern crate veml6030;
+//! use veml6030::{SlaveAddr, Veml6030};
+//!
+//! # fn main() {
+//! let dev = hal::I2cdev::new("/dev/i2c-1").unwrap();
+//! let mut sensor = Veml6030::new(dev, SlaveAddr::default());
+//! sensor.enable().unwrap();
+//! loop {
+//!     let raw = sensor.read_raw().unwrap();
+//!     // ...
+//!     let lux = sensor.convert_raw_als_to_lux(raw);
+//!     println!("lux: {:2}", lux);
+//! }
+//! # }
+//! ```
+//!
+//! ### Read the raw ALS measurement and convert to lux separately
+//!
+//! Using free function
+//!
+//! ```no_run
+//! extern crate linux_embedded_hal as hal;
+//! extern crate veml6030;
+//! use veml6030::{
+//!     convert_raw_als_to_lux,
+//!     Gain, IntegrationTime, SlaveAddr, Veml6030
+//! };
+//!
+//! # fn main() {
+//! let gain = Gain::OneEighth;
+//! let it = IntegrationTime::Ms200;
+//! let dev = hal::I2cdev::new("/dev/i2c-1").unwrap();
+//! let mut sensor = Veml6030::new(dev, SlaveAddr::default());
+//! sensor.set_gain(gain).unwrap();
+//! sensor.set_integration_time(it).unwrap();
+//! sensor.enable().unwrap();
+//! loop {
+//!     let raw = sensor.read_raw().unwrap();
+//!     // ...
+//!     let lux = convert_raw_als_to_lux(it, gain, raw);
+//!     println!("lux: {:2}", lux);
+//! }
+//! # }
+//! ```
 
 #![deny(unsafe_code, missing_docs)]
 #![no_std]
@@ -224,6 +279,7 @@ extern crate libm;
 mod correction;
 mod device_impl;
 pub use correction::calculate_raw_threshold_value;
+pub use device_impl::convert_raw_als_to_lux;
 mod types;
 pub use types::{
     Error, FaultCount, Gain, IntegrationTime, InterruptStatus, PowerSavingMode, SlaveAddr,

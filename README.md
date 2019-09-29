@@ -13,7 +13,9 @@ light sensor using the [`embedded-hal`] traits.
 This driver allows you to:
 - Enable/disable the device. See: `enable()`.
 - Read the measured lux value. See: `read_lux()`.
-- Read the white channel measurment. See: `read_white()`.
+- Read the white channel measurement. See: `read_white()`.
+- Read the measured ALS value in raw format. See: `read_raw()`.
+- Calculate the compensated lux for a raw ALS value. See: `convert_raw_als_to_lux()`.
 - Set the gain. See: `set_gain()`.
 - Set the integration time. See: `set_integration_time()`.
 - Set the fault count. See: `set_fault_count()`.

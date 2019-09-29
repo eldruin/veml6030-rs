@@ -233,13 +233,19 @@ where
     /// `lux = 6.0135e-13*(lux^4) - 9.3924e-9*(lux^3) + 8.1488e-5*(lux^2) + 1.0023*lux`
     pub fn read_lux(&mut self) -> Result<f32, Error<E>> {
         let raw = self.read_register(Register::ALS)?;
-        let factor = get_lux_raw_conversion_factor(self.it, self.gain);
-        let lux = f64::from(raw) * f64::from(factor);
-        if (self.gain == Gain::OneQuarter || self.gain == Gain::OneEighth) && lux > 1000.0 {
-            Ok(correct_high_lux(lux) as f32)
-        } else {
-            Ok(lux as f32)
-        }
+        Ok(self.convert_raw_als_to_lux(raw))
+    }
+
+    /// Calculate lux value for a raw ALS measurement.
+    ///
+    /// This takes into consideration the configured integration time and gain
+    /// and compensates the lux value if necessary.
+    ///
+    /// For values higher than 1000 lx and 1/4 or 1/8 gain,
+    /// the following compensation formula is applied:
+    /// `lux = 6.0135e-13*(lux^4) - 9.3924e-9*(lux^3) + 8.1488e-5*(lux^2) + 1.0023*lux`
+    pub fn convert_raw_als_to_lux(&self, raw_als: u16) -> f32 {
+        convert_raw_als_to_lux(self.it, self.gain, raw_als)
     }
 
     /// Read white channel measurement
@@ -253,5 +259,20 @@ where
             .write_read(self.address, &[register], &mut data)
             .map_err(Error::I2C)
             .and(Ok(u16::from(data[0]) | u16::from(data[1]) << 8))
+    }
+}
+
+/// Calculate lux value for a raw ALS measurement.
+///
+/// For values higher than 1000 lx and 1/4 or 1/8 gain,
+/// the following compensation formula is applied:
+/// `lux = 6.0135e-13*(lux^4) - 9.3924e-9*(lux^3) + 8.1488e-5*(lux^2) + 1.0023*lux`
+pub fn convert_raw_als_to_lux(it: IntegrationTime, gain: Gain, raw_als: u16) -> f32 {
+    let factor = get_lux_raw_conversion_factor(it, gain);
+    let lux = f64::from(raw_als) * f64::from(factor);
+    if (gain == Gain::OneQuarter || gain == Gain::OneEighth) && lux > 1000.0 {
+        correct_high_lux(lux) as f32
+    } else {
+        lux as f32
     }
 }
