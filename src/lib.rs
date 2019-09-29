@@ -30,12 +30,13 @@
 //!
 //! [Introductory blog post](TODO)
 //!
-//! ## The devices
+//! ## The device
 //!
-//! VEML6030 is a high accuracy ambient light digital 16-bit resolution sensor in
-//! a miniature transparent 2mm x 2mm package. It includes a high sensitive
-//! photodiode, a low noise amplifier, a 16-bit A/D converter and supports an easy
-//! to use I2C bus communication interface and additional interrupt feature.
+//! Vishay's VEML6030 is a high accuracy ambient light digital 16-bit
+//! resolution sensor in a miniature transparent 2mm x 2mm package. It includes
+//! a high sensitive photodiode, a low noise amplifier, a 16-bit A/D converter
+//! and supports an easy to use I2C bus communication interface and additional
+//! interrupt feature.
 //! The ambient light result is as digital value available.
 //!
 //! Datasheet:
