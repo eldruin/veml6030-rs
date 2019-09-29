@@ -10,11 +10,12 @@ use libm::F64Ext;
 /// may be interesting to calculate the threshold values ahead of time.
 pub fn calculate_raw_threshold_value(it: IntegrationTime, gain: Gain, lux: f32) -> u16 {
     let factor = get_lux_raw_conversion_factor(it, gain);
-    let mut lux = f64::from(lux);
     if (gain == Gain::OneQuarter || gain == Gain::OneEighth) && lux > 1000.0 {
-        lux = inverse_high_lux_correction(f64::from(lux));
+        let lux = inverse_high_lux_correction(f64::from(lux));
+        (lux / f64::from(factor)) as u16
+    } else {
+        (f64::from(lux) / f64::from(factor)) as u16
     }
-    (lux / f64::from(factor)) as u16
 }
 
 pub(crate) fn get_lux_raw_conversion_factor(it: IntegrationTime, gain: Gain) -> f32 {
@@ -32,7 +33,7 @@ pub(crate) fn get_lux_raw_conversion_factor(it: IntegrationTime, gain: Gain) -> 
         IntegrationTime::Ms50 => 0.0576,
         IntegrationTime::Ms25 => 0.1152,
     };
-    return gain_factor * it_factor;
+    gain_factor * it_factor
 }
 
 const C0: f64 = 1.0023;
@@ -172,5 +173,5 @@ mod correction_tests {
     check_correction!(_20000, 20000.0);
     check_correction!(_56789, 56789.0);
     check_correction!(_78901, 78901.0);
-    check_correction!(_120000, 120000.0);
+    check_correction!(_120000, 120_000.0);
 }
