@@ -53,6 +53,164 @@
 //!
 //! [driver-examples]: https://github.com/eldruin/driver-examples
 //!
+//! ### Read the lux
+//!
+//! ```no_run
+//! extern crate linux_embedded_hal as hal;
+//! extern crate veml6030;
+//! use veml6030::{SlaveAddr, Veml6030};
+//!
+//! # fn main() {
+//! let dev = hal::I2cdev::new("/dev/i2c-1").unwrap();
+//! let mut sensor = Veml6030::new(dev, SlaveAddr::default());
+//! sensor.enable().unwrap();
+//! loop {
+//!     let lux = sensor.read_lux().unwrap();
+//!     println!("lux: {:2}", lux);
+//! }
+//! # }
+//! ```
+//!
+//! ### Provide an alternative address
+//!
+//! ```no_run
+//! extern crate linux_embedded_hal as hal;
+//! extern crate veml6030;
+//! use veml6030::{SlaveAddr, Veml6030};
+//!
+//! # fn main() {
+//! let dev = hal::I2cdev::new("/dev/i2c-1").unwrap();
+//! let address = SlaveAddr::Alternative(true);
+//! let mut sensor = Veml6030::new(dev, address);
+//! # }
+//! ```
+//!
+//! ### Set the gain and integration time
+//!
+//! ```no_run
+//! extern crate linux_embedded_hal as hal;
+//! extern crate veml6030;
+//! use veml6030::{Gain, IntegrationTime, SlaveAddr, Veml6030};
+//!
+//! # fn main() {
+//! let dev = hal::I2cdev::new("/dev/i2c-1").unwrap();
+//! let mut sensor = Veml6030::new(dev, SlaveAddr::default());
+//! sensor.set_gain(Gain::OneQuarter).unwrap();
+//! sensor.set_integration_time(IntegrationTime::Ms200).unwrap();
+//! sensor.enable().unwrap();
+//! # }
+//! ```
+//!
+//! ### Enable power-saving mode
+//!
+//! ```no_run
+//! extern crate linux_embedded_hal as hal;
+//! extern crate veml6030;
+//! use veml6030::{PowerSavingMode, SlaveAddr, Veml6030};
+//!
+//! # fn main() {
+//! let dev = hal::I2cdev::new("/dev/i2c-1").unwrap();
+//! let mut sensor = Veml6030::new(dev, SlaveAddr::default());
+//! sensor.enable_power_saving(PowerSavingMode::One).unwrap();
+//! sensor.enable().unwrap();
+//! # }
+//! ```
+//!
+//! ### Set thresholds, fault count and enable interrupts
+//!
+//! ```no_run
+//! extern crate linux_embedded_hal as hal;
+//! extern crate veml6030;
+//! use veml6030::{
+//!     FaultCount, Gain, IntegrationTime, SlaveAddr, Veml6030
+//! };
+//!
+//! # fn main() {
+//! let dev = hal::I2cdev::new("/dev/i2c-1").unwrap();
+//! let mut sensor = Veml6030::new(dev, SlaveAddr::default());
+//! sensor.set_gain(Gain::OneQuarter).unwrap();
+//! // this will compensate the value automatically before setting it
+//! sensor.set_high_threshold_lux(10000.0).unwrap();
+//! sensor.set_low_threshold_lux(100.0).unwrap();
+//! sensor.set_fault_count(FaultCount::Four).unwrap();
+//! sensor.enable_interrupts().unwrap();
+//! sensor.enable().unwrap();
+//! # }
+//! ```
+//!
+//! ### Precalculate and set compensated threshold values
+//!
+//! Using current device configuration
+//!
+//! ```no_run
+//! extern crate linux_embedded_hal as hal;
+//! extern crate veml6030;
+//! use veml6030::{Gain, IntegrationTime, SlaveAddr, Veml6030};
+//!
+//! # fn main() {
+//! let dev = hal::I2cdev::new("/dev/i2c-1").unwrap();
+//! let mut sensor = Veml6030::new(dev, SlaveAddr::default());
+//! sensor.set_gain(Gain::OneEighth).unwrap();
+//! sensor.set_integration_time(IntegrationTime::Ms200).unwrap();
+//! let high_th_raw = sensor.calculate_raw_threshold_value(10000.0);
+//! // ...
+//! sensor.set_high_threshold_raw(high_th_raw).unwrap();
+//! // this requires no compensation because the value is < 1000
+//! sensor.set_low_threshold_lux(100.0).unwrap();
+//! # }
+//! ```
+//!
+//! ### Precalculate and set compensated threshold values
+//!
+//! With free function
+//!
+//! ```no_run
+//! extern crate linux_embedded_hal as hal;
+//! extern crate veml6030;
+//! use veml6030::{
+//!     calculate_raw_threshold_value,
+//!     Gain, IntegrationTime, SlaveAddr, Veml6030
+//! };
+//!
+//! # fn main() {
+//! let gain = Gain::OneEighth;
+//! let it = IntegrationTime::Ms200;
+//! let high_th_raw = calculate_raw_threshold_value(it, gain, 10000.0);
+//! let dev = hal::I2cdev::new("/dev/i2c-1").unwrap();
+//! let mut sensor = Veml6030::new(dev, SlaveAddr::default());
+//! sensor.set_gain(gain).unwrap();
+//! sensor.set_integration_time(it).unwrap();
+//! // ...
+//! sensor.set_high_threshold_raw(high_th_raw).unwrap();
+//! // this requires no compensation because the value is < 1000
+//! sensor.set_low_threshold_lux(100.0).unwrap();
+//! sensor.enable_interrupts().unwrap();
+//! sensor.enable().unwrap();
+//! # }
+//! ```
+//!
+//! ### Read interrupt status
+//!
+//! ```no_run
+//! extern crate linux_embedded_hal as hal;
+//! extern crate veml6030;
+//! use veml6030::{SlaveAddr, Veml6030};
+//!
+//! # fn main() {
+//! let dev = hal::I2cdev::new("/dev/i2c-1").unwrap();
+//! let mut sensor = Veml6030::new(dev, SlaveAddr::default());
+//! // ...
+//! loop {
+//!     let status = sensor.read_interrupt_status().unwrap();
+//!     if status.was_too_high {
+//!         // ...
+//!     }
+//!     if status.was_too_low {
+//!         // ...
+//!     }
+//! }
+//! # }
+//! ```
 
 #![deny(unsafe_code, missing_docs)]
 #![no_std]
