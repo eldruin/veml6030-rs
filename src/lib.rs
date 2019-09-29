@@ -28,7 +28,9 @@
 //! [`set_high_threshold_lux()`]: struct.Veml6030.html#method.set_high_threshold_lux
 //! [`calculate_raw_threshold_value()`]: fn.calculate_raw_threshold_value.html
 //!
+//! <!-- TODO
 //! [Introductory blog post](TODO)
+//! -->
 //!
 //! ## The device
 //!
