@@ -25,7 +25,7 @@ impl BitFlags {
 }
 
 pub fn new(transactions: &[I2cTrans]) -> Veml6030<I2cMock> {
-    Veml6030::new(I2cMock::new(&transactions), SlaveAddr::default())
+    Veml6030::new(I2cMock::new(transactions), SlaveAddr::default())
 }
 
 pub fn destroy(sensor: Veml6030<I2cMock>) {
