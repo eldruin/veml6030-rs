@@ -32,9 +32,7 @@
 //! [`set_high_threshold_lux()`]: struct.Veml6030.html#method.set_high_threshold_lux
 //! [`calculate_raw_threshold_value()`]: fn.calculate_raw_threshold_value.html
 //!
-//! <!-- TODO
-//! [Introductory blog post](TODO)
-//! -->
+//! [Introductory blog post](https://blog.eldruin.com/veml6030-ambient-light-sensor-driver-in-rust/)
 //!
 //! ## The device
 //!

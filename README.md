@@ -1,9 +1,7 @@
 # Rust VEML6030 High Accuracy Ambient Light Sensor Driver
 
-<!-- TODO
 [![crates.io](https://img.shields.io/crates/v/veml6030.svg)](https://crates.io/crates/veml6030)
 [![Docs](https://docs.rs/veml6030/badge.svg)](https://docs.rs/veml6030)
--->
 [![Build Status](https://travis-ci.org/eldruin/veml6030-rs.svg?branch=master)](https://travis-ci.org/eldruin/veml6030-rs)
 [![Coverage Status](https://coveralls.io/repos/github/eldruin/veml6030-rs/badge.svg?branch=master)](https://coveralls.io/github/eldruin/veml6030-rs?branch=master)
 
@@ -25,9 +23,7 @@ This driver allows you to:
 - Set the high/low thresholds in lux or raw. See: `set_high_threshold_lux()`.
 - Calculate the compensated raw threshold value ahead of time. See: `calculate_raw_threshold_value()`.
 
-<!-- TODO
-[Introductory blog post]()
--->
+[Introductory blog post](https://blog.eldruin.com/veml6030-ambient-light-sensor-driver-in-rust/)
 
 ## The device
 
