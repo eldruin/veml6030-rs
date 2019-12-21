@@ -1,10 +1,10 @@
 [package]
 name = "veml6030"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Diego Barrios Romero <eldruin@gmail.com>"]
 repository = "https://github.com/eldruin/veml6030-rs"
 license = "MIT OR Apache-2.0"
-description = "Platform-agnostic Rust driver for the VEML6030 high-accuracy ambient light sensor."
+description = "Platform-agnostic Rust driver for the VEML6030 and VEML7700 high-accuracy ambient light sensors."
 readme = "README.md"
 keywords = ["als", "ambient", "light", "sensor", "embedded-hal-driver"]
 categories = ["embedded", "hardware-support", "no-std"]
