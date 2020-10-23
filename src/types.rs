@@ -22,6 +22,25 @@ pub enum IntegrationTime {
     Ms800,
 }
 
+impl IntegrationTime {
+    /// Return the integration time in milliseconds
+    pub fn as_ms(&self) -> u16 {
+        match self {
+            IntegrationTime::Ms25 => 25,
+            IntegrationTime::Ms50 => 50,
+            IntegrationTime::Ms100 => 100,
+            IntegrationTime::Ms200 => 200,
+            IntegrationTime::Ms400 => 400,
+            IntegrationTime::Ms800 => 800,
+        }
+    }
+
+    /// Return the integration time in microseconds
+    pub fn as_us(&self) -> u32 {
+        (self.as_ms() as u32) * 1000
+    }
+}
+
 /// Gain
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Gain {
@@ -106,7 +125,7 @@ impl SlaveAddr {
 
 #[cfg(test)]
 mod tests {
-    use super::SlaveAddr;
+    use super::*;
 
     #[test]
     fn can_get_default_address() {
@@ -118,5 +137,13 @@ mod tests {
     fn can_generate_alternative_addresses() {
         assert_eq!(0x10, SlaveAddr::Alternative(false).addr());
         assert_eq!(0x48, SlaveAddr::Alternative(true).addr());
+    }
+
+    #[test]
+    fn integration_time_as_int() {
+        assert_eq!(IntegrationTime::Ms25.as_ms(), 25);
+        assert_eq!(IntegrationTime::Ms25.as_us(), 25_000);
+        assert_eq!(IntegrationTime::Ms800.as_ms(), 800);
+        assert_eq!(IntegrationTime::Ms800.as_us(), 800_000);
     }
 }
