@@ -1,12 +1,10 @@
-extern crate embedded_hal_mock as hal;
-extern crate veml6030;
-use hal::i2c::Transaction as I2cTrans;
+use embedded_hal_mock::i2c::Transaction as I2cTrans;
 use veml6030::{
     FaultCount as FC, Gain, IntegrationTime as IT, InterruptStatus, PowerSavingMode as PSM,
 };
 
 mod common;
-use common::{destroy, new, BitFlags as BF, Register as Reg, CFG_DEFAULT, DEV_ADDR};
+use crate::common::{destroy, new, BitFlags as BF, Register as Reg, CFG_DEFAULT, DEV_ADDR};
 
 #[test]
 fn can_create_and_destroy() {
