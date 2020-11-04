@@ -1,8 +1,9 @@
 use super::correction::{correct_high_lux, get_lux_raw_conversion_factor};
 use crate::{
-    calculate_raw_threshold_value, hal, Config, Error, FaultCount, Gain, IntegrationTime,
+    calculate_raw_threshold_value, Config, Error, FaultCount, Gain, IntegrationTime,
     InterruptStatus, PowerSavingMode, SlaveAddr, Veml6030,
 };
+use embedded_hal::blocking::i2c;
 
 struct Register;
 impl Register {
@@ -59,7 +60,7 @@ impl<I2C> Veml6030<I2C> {
 
 impl<I2C, E> Veml6030<I2C>
 where
-    I2C: hal::blocking::i2c::Write<Error = E>,
+    I2C: i2c::Write<Error = E>,
 {
     /// Enable the device.
     ///
@@ -206,7 +207,7 @@ where
 
 impl<I2C, E> Veml6030<I2C>
 where
-    I2C: hal::blocking::i2c::WriteRead<Error = E>,
+    I2C: i2c::WriteRead<Error = E>,
 {
     /// Read whether an interrupt has occurred.
     ///

@@ -245,9 +245,6 @@
 #![deny(unsafe_code, missing_docs)]
 #![no_std]
 
-extern crate embedded_hal as hal;
-extern crate libm;
-
 mod correction;
 mod device_impl;
 pub use crate::correction::calculate_raw_threshold_value;
