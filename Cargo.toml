@@ -10,6 +10,7 @@ keywords = ["als", "ambient", "light", "sensor", "embedded-hal-driver"]
 categories = ["embedded", "hardware-support", "no-std"]
 homepage = "https://github.com/eldruin/veml6030-rs"
 documentation = "https://docs.rs/veml6030"
+edition = "2018"
 include = [
     "/**/*.rs",
     "/Cargo.toml",

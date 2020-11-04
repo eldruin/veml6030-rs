@@ -1,5 +1,5 @@
 use super::correction::{correct_high_lux, get_lux_raw_conversion_factor};
-use {
+use crate::{
     calculate_raw_threshold_value, hal, Config, Error, FaultCount, Gain, IntegrationTime,
     InterruptStatus, PowerSavingMode, SlaveAddr, Veml6030,
 };

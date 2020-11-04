@@ -53,7 +53,7 @@
 //!
 //! To use this driver, import this crate and an `embedded_hal` implementation,
 //! then instantiate the appropriate device.
-//! 
+//!
 //! VEML6030 and VEML7700 expose the same interface over I2C. To communicate with a VEML7700
 //! simply use this driver as if communicating with a VEML6030.
 //!
@@ -64,77 +64,63 @@
 //! ### Read the lux
 //!
 //! ```no_run
-//! extern crate linux_embedded_hal as hal;
-//! extern crate veml6030;
+//! use linux_embedded_hal::I2cdev;
 //! use veml6030::{SlaveAddr, Veml6030};
 //!
-//! # fn main() {
-//! let dev = hal::I2cdev::new("/dev/i2c-1").unwrap();
+//! let dev = I2cdev::new("/dev/i2c-1").unwrap();
 //! let mut sensor = Veml6030::new(dev, SlaveAddr::default());
 //! sensor.enable().unwrap();
 //! loop {
 //!     let lux = sensor.read_lux().unwrap();
 //!     println!("lux: {:2}", lux);
 //! }
-//! # }
 //! ```
 //!
 //! ### Provide an alternative address
 //!
 //! ```no_run
-//! extern crate linux_embedded_hal as hal;
-//! extern crate veml6030;
+//! use linux_embedded_hal::I2cdev;
 //! use veml6030::{SlaveAddr, Veml6030};
 //!
-//! # fn main() {
-//! let dev = hal::I2cdev::new("/dev/i2c-1").unwrap();
+//! let dev = I2cdev::new("/dev/i2c-1").unwrap();
 //! let address = SlaveAddr::Alternative(true);
 //! let mut sensor = Veml6030::new(dev, address);
-//! # }
 //! ```
 //!
 //! ### Set the gain and integration time
 //!
 //! ```no_run
-//! extern crate linux_embedded_hal as hal;
-//! extern crate veml6030;
+//! use linux_embedded_hal::I2cdev;
 //! use veml6030::{Gain, IntegrationTime, SlaveAddr, Veml6030};
 //!
-//! # fn main() {
-//! let dev = hal::I2cdev::new("/dev/i2c-1").unwrap();
+//! let dev = I2cdev::new("/dev/i2c-1").unwrap();
 //! let mut sensor = Veml6030::new(dev, SlaveAddr::default());
 //! sensor.set_gain(Gain::OneQuarter).unwrap();
 //! sensor.set_integration_time(IntegrationTime::Ms200).unwrap();
 //! sensor.enable().unwrap();
-//! # }
 //! ```
 //!
 //! ### Enable power-saving mode
 //!
 //! ```no_run
-//! extern crate linux_embedded_hal as hal;
-//! extern crate veml6030;
+//! use linux_embedded_hal::I2cdev;
 //! use veml6030::{PowerSavingMode, SlaveAddr, Veml6030};
 //!
-//! # fn main() {
-//! let dev = hal::I2cdev::new("/dev/i2c-1").unwrap();
+//! let dev = I2cdev::new("/dev/i2c-1").unwrap();
 //! let mut sensor = Veml6030::new(dev, SlaveAddr::default());
 //! sensor.enable_power_saving(PowerSavingMode::One).unwrap();
 //! sensor.enable().unwrap();
-//! # }
 //! ```
 //!
 //! ### Set thresholds, fault count and enable interrupts
 //!
 //! ```no_run
-//! extern crate linux_embedded_hal as hal;
-//! extern crate veml6030;
+//! use linux_embedded_hal::I2cdev;
 //! use veml6030::{
 //!     FaultCount, Gain, IntegrationTime, SlaveAddr, Veml6030
 //! };
 //!
-//! # fn main() {
-//! let dev = hal::I2cdev::new("/dev/i2c-1").unwrap();
+//! let dev = I2cdev::new("/dev/i2c-1").unwrap();
 //! let mut sensor = Veml6030::new(dev, SlaveAddr::default());
 //! sensor.set_gain(Gain::OneQuarter).unwrap();
 //! // this will compensate the value automatically before setting it
@@ -143,7 +129,6 @@
 //! sensor.set_fault_count(FaultCount::Four).unwrap();
 //! sensor.enable_interrupts().unwrap();
 //! sensor.enable().unwrap();
-//! # }
 //! ```
 //!
 //! ### Precalculate and set compensated threshold values
@@ -151,12 +136,10 @@
 //! Using current device configuration
 //!
 //! ```no_run
-//! extern crate linux_embedded_hal as hal;
-//! extern crate veml6030;
+//! use linux_embedded_hal::I2cdev;
 //! use veml6030::{Gain, IntegrationTime, SlaveAddr, Veml6030};
 //!
-//! # fn main() {
-//! let dev = hal::I2cdev::new("/dev/i2c-1").unwrap();
+//! let dev = I2cdev::new("/dev/i2c-1").unwrap();
 //! let mut sensor = Veml6030::new(dev, SlaveAddr::default());
 //! sensor.set_gain(Gain::OneEighth).unwrap();
 //! sensor.set_integration_time(IntegrationTime::Ms200).unwrap();
@@ -165,7 +148,6 @@
 //! sensor.set_high_threshold_raw(high_th_raw).unwrap();
 //! // this requires no compensation because the value is < 1000
 //! sensor.set_low_threshold_lux(100.0).unwrap();
-//! # }
 //! ```
 //!
 //! ### Precalculate and set compensated threshold values
@@ -173,18 +155,16 @@
 //! Using free function
 //!
 //! ```no_run
-//! extern crate linux_embedded_hal as hal;
-//! extern crate veml6030;
+//! use linux_embedded_hal::I2cdev;
 //! use veml6030::{
 //!     calculate_raw_threshold_value,
 //!     Gain, IntegrationTime, SlaveAddr, Veml6030
 //! };
 //!
-//! # fn main() {
 //! let gain = Gain::OneEighth;
 //! let it = IntegrationTime::Ms200;
 //! let high_th_raw = calculate_raw_threshold_value(it, gain, 10000.0);
-//! let dev = hal::I2cdev::new("/dev/i2c-1").unwrap();
+//! let dev = I2cdev::new("/dev/i2c-1").unwrap();
 //! let mut sensor = Veml6030::new(dev, SlaveAddr::default());
 //! sensor.set_gain(gain).unwrap();
 //! sensor.set_integration_time(it).unwrap();
@@ -194,18 +174,15 @@
 //! sensor.set_low_threshold_lux(100.0).unwrap();
 //! sensor.enable_interrupts().unwrap();
 //! sensor.enable().unwrap();
-//! # }
 //! ```
 //!
 //! ### Read interrupt status
 //!
 //! ```no_run
-//! extern crate linux_embedded_hal as hal;
-//! extern crate veml6030;
+//! use linux_embedded_hal::I2cdev;
 //! use veml6030::{SlaveAddr, Veml6030};
 //!
-//! # fn main() {
-//! let dev = hal::I2cdev::new("/dev/i2c-1").unwrap();
+//! let dev = I2cdev::new("/dev/i2c-1").unwrap();
 //! let mut sensor = Veml6030::new(dev, SlaveAddr::default());
 //! // ...
 //! loop {
@@ -217,7 +194,6 @@
 //!         // ...
 //!     }
 //! }
-//! # }
 //! ```
 //!
 //! ### Read the raw ALS measurement and convert to lux separately
@@ -225,12 +201,10 @@
 //! Using current device configuration
 //!
 //! ```no_run
-//! extern crate linux_embedded_hal as hal;
-//! extern crate veml6030;
+//! use linux_embedded_hal::I2cdev;
 //! use veml6030::{SlaveAddr, Veml6030};
 //!
-//! # fn main() {
-//! let dev = hal::I2cdev::new("/dev/i2c-1").unwrap();
+//! let dev = I2cdev::new("/dev/i2c-1").unwrap();
 //! let mut sensor = Veml6030::new(dev, SlaveAddr::default());
 //! sensor.enable().unwrap();
 //! loop {
@@ -239,7 +213,6 @@
 //!     let lux = sensor.convert_raw_als_to_lux(raw);
 //!     println!("lux: {:2}", lux);
 //! }
-//! # }
 //! ```
 //!
 //! ### Read the raw ALS measurement and convert to lux separately
@@ -247,17 +220,15 @@
 //! Using free function
 //!
 //! ```no_run
-//! extern crate linux_embedded_hal as hal;
-//! extern crate veml6030;
+//! use linux_embedded_hal::I2cdev;
 //! use veml6030::{
 //!     convert_raw_als_to_lux,
 //!     Gain, IntegrationTime, SlaveAddr, Veml6030
 //! };
 //!
-//! # fn main() {
 //! let gain = Gain::OneEighth;
 //! let it = IntegrationTime::Ms200;
-//! let dev = hal::I2cdev::new("/dev/i2c-1").unwrap();
+//! let dev = I2cdev::new("/dev/i2c-1").unwrap();
 //! let mut sensor = Veml6030::new(dev, SlaveAddr::default());
 //! sensor.set_gain(gain).unwrap();
 //! sensor.set_integration_time(it).unwrap();
@@ -268,7 +239,6 @@
 //!     let lux = convert_raw_als_to_lux(it, gain, raw);
 //!     println!("lux: {:2}", lux);
 //! }
-//! # }
 //! ```
 
 #![deny(unsafe_code, missing_docs)]
@@ -279,10 +249,10 @@ extern crate libm;
 
 mod correction;
 mod device_impl;
-pub use correction::calculate_raw_threshold_value;
-pub use device_impl::convert_raw_als_to_lux;
+pub use crate::correction::calculate_raw_threshold_value;
+pub use crate::device_impl::convert_raw_als_to_lux;
 mod types;
-pub use types::{
+pub use crate::types::{
     Error, FaultCount, Gain, IntegrationTime, InterruptStatus, PowerSavingMode, SlaveAddr,
 };
 
