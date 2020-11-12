@@ -2,7 +2,7 @@
 
 [![crates.io](https://img.shields.io/crates/v/veml6030.svg)](https://crates.io/crates/veml6030)
 [![Docs](https://docs.rs/veml6030/badge.svg)](https://docs.rs/veml6030)
-[![Build Status](https://travis-ci.org/eldruin/veml6030-rs.svg?branch=master)](https://travis-ci.org/eldruin/veml6030-rs)
+[![Build Status](https://github.com/eldruin/veml6030-rs/workflows/Build/badge.svg)](https://github.com/eldruin/veml6030-rs/actions?query=workflow%3ABuild)
 [![Coverage Status](https://coveralls.io/repos/github/eldruin/veml6030-rs/badge.svg?branch=master)](https://coveralls.io/github/eldruin/veml6030-rs?branch=master)
 
 This is a platform agnostic Rust driver for the VEML6030 and VEML7700 high accuracy ambient

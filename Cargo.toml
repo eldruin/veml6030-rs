@@ -13,7 +13,6 @@ documentation = "https://docs.rs/veml6030"
 edition = "2018"
 
 [badges]
-travis-ci = { repository = "eldruin/veml6030-rs", branch = "master" }
 coveralls = { repository = "eldruin/veml6030-rs", branch = "master", service = "github" }
 
 [dependencies]
