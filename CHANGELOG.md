@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - bump `embedded-hal` to 1.0.0
 - bump `libm` to 0.2
+- bump `linux-embedded-hal` to 0.4
 
 ### Changed
 
