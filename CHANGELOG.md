@@ -11,6 +11,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 
 - The `IntegrationTime` enum now has `as_ms` and `as_us` methods
+- `async` support via `maybe-async`
+
+### Changed
+
+- bump `embedded-hal` to 1.0.0
 
 ### Changed
 
