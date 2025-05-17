@@ -1,4 +1,4 @@
-use embedded_hal_mock::i2c::Transaction as I2cTrans;
+use embedded_hal_mock::eh1::i2c::Transaction as I2cTrans;
 use veml6030::{
     FaultCount as FC, Gain, IntegrationTime as IT, InterruptStatus, PowerSavingMode as PSM,
 };

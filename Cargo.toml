@@ -27,7 +27,7 @@ maybe-async-cfg = "0.2.3"
 
 [dev-dependencies]
 linux-embedded-hal = "0.3"
-embedded-hal-mock = "0.7"
+embedded-hal-mock = "0.11.1"
 
 [profile.release]
 lto = true
