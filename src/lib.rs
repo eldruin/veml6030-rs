@@ -241,7 +241,6 @@
 //! }
 //! ```
 
-#![doc(html_root_url = "https://docs.rs/veml6030/0.1.2")]
 #![deny(unsafe_code, missing_docs)]
 #![no_std]
 
