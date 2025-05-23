@@ -102,7 +102,7 @@ where
             Gain::OneEighth => 2,
             Gain::OneQuarter => 3,
         };
-        let config = self.config.bits & !(0b11 << 11) | mask << 11;
+        let config = self.config.bits & !(0b11 << 11) | (mask << 11);
         self.set_config(Config { bits: config })?;
         self.gain = gain;
         Ok(())
@@ -117,7 +117,7 @@ where
             FaultCount::Four => 2,
             FaultCount::Eight => 3,
         };
-        let config = self.config.bits & !(0b11 << 4) | mask << 4;
+        let config = self.config.bits & !(0b11 << 4) | (mask << 4);
         self.set_config(Config { bits: config })
     }
 
@@ -183,7 +183,7 @@ where
             PowerSavingMode::Three => 2,
             PowerSavingMode::Four => 3,
         };
-        let value = BitFlags::PSM_EN | mask << 1;
+        let value = BitFlags::PSM_EN | (mask << 1);
         self.write_register(Register::PSM, value)
     }
 
@@ -259,7 +259,7 @@ where
         self.i2c
             .write_read(self.address, &[register], &mut data)
             .map_err(Error::I2C)
-            .and(Ok(u16::from(data[0]) | u16::from(data[1]) << 8))
+            .and(Ok(u16::from(data[0]) | (u16::from(data[1]) << 8)))
     }
 }
 

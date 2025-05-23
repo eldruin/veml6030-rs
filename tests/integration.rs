@@ -71,45 +71,45 @@ cfg_test!(
 );
 
 cfg_test!(set_gain_1, set_gain, CFG_DEFAULT, Gain::One);
-cfg_test!(set_gain_2, set_gain, CFG_DEFAULT | 1 << 11, Gain::Two);
+cfg_test!(set_gain_2, set_gain, CFG_DEFAULT | (1 << 11), Gain::Two);
 cfg_test!(
     set_gain_one_eighth,
     set_gain,
-    CFG_DEFAULT | 2 << 11,
+    CFG_DEFAULT | (2 << 11),
     Gain::OneEighth
 );
 cfg_test!(
     set_gain_one_quarter,
     set_gain,
-    CFG_DEFAULT | 3 << 11,
+    CFG_DEFAULT | (3 << 11),
     Gain::OneQuarter
 );
 
 cfg_test!(set_fc_1, set_fault_count, CFG_DEFAULT, FC::One);
-cfg_test!(set_fc_2, set_fault_count, CFG_DEFAULT | 1 << 4, FC::Two);
-cfg_test!(set_fc_4, set_fault_count, CFG_DEFAULT | 2 << 4, FC::Four);
-cfg_test!(set_fc_8, set_fault_count, CFG_DEFAULT | 3 << 4, FC::Eight);
+cfg_test!(set_fc_2, set_fault_count, CFG_DEFAULT | (1 << 4), FC::Two);
+cfg_test!(set_fc_4, set_fault_count, CFG_DEFAULT | (2 << 4), FC::Four);
+cfg_test!(set_fc_8, set_fault_count, CFG_DEFAULT | (3 << 4), FC::Eight);
 
 set_test!(enable_psm_1, enable_power_saving, PSM, BF::PSM_EN, PSM::One);
 set_test!(
     enable_psm_2,
     enable_power_saving,
     PSM,
-    BF::PSM_EN | 1 << 1,
+    BF::PSM_EN | (1 << 1),
     PSM::Two
 );
 set_test!(
     enable_psm_3,
     enable_power_saving,
     PSM,
-    BF::PSM_EN | 2 << 1,
+    BF::PSM_EN | (2 << 1),
     PSM::Three
 );
 set_test!(
     enable_psm_4,
     enable_power_saving,
     PSM,
-    BF::PSM_EN | 3 << 1,
+    BF::PSM_EN | (3 << 1),
     PSM::Four
 );
 set_test!(disable_psm, disable_power_saving, PSM, 0);
@@ -218,7 +218,7 @@ read_lux_test!(
     Ms100,
     OneQuarter,
     CFG_DEFAULT,
-    CFG_DEFAULT | 3 << 11,
+    CFG_DEFAULT | (3 << 11),
     1480_u16,
     341.0
 );
@@ -227,7 +227,7 @@ read_lux_test!(
     Ms800,
     Two,
     CFG_DEFAULT | (0b0011 << 6),
-    CFG_DEFAULT | (0b0011 << 6) | 1 << 11,
+    CFG_DEFAULT | (0b0011 << 6) | (1 << 11),
     1480_u16,
     5.328
 );
@@ -236,7 +236,7 @@ read_lux_test!(
     Ms25,
     OneEighth,
     CFG_DEFAULT | (0b1100 << 6),
-    CFG_DEFAULT | (0b1100 << 6) | 2 << 11,
+    CFG_DEFAULT | (0b1100 << 6) | (2 << 11),
     1480_u16,
     3183.247
 );
@@ -254,7 +254,7 @@ read_lux_test!(
     Ms200,
     OneQuarter,
     CFG_DEFAULT | (0b0001 << 6),
-    CFG_DEFAULT | (0b0001 << 6) | 3 << 11,
+    CFG_DEFAULT | (0b0001 << 6) | (3 << 11),
     1480_u16,
     170.496
 );
@@ -263,7 +263,7 @@ read_lux_test!(
     Ms400,
     OneEighth,
     CFG_DEFAULT | (0b0010 << 6),
-    CFG_DEFAULT | (0b0010 << 6) | 2 << 11,
+    CFG_DEFAULT | (0b0010 << 6) | (2 << 11),
     1480_u16,
     170.496
 );
