@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - The `IntegrationTime` enum now has `as_ms` and `as_us` methods
 
+### Changed
+
+- Upgrade MSRV to 1.75.0
+
 ## [0.1.1] - 2019-12-21
 
 Note compatibility with VEML7700 in the documentation.

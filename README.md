@@ -2,6 +2,7 @@
 
 [![crates.io](https://img.shields.io/crates/v/veml6030.svg)](https://crates.io/crates/veml6030)
 [![Docs](https://docs.rs/veml6030/badge.svg)](https://docs.rs/veml6030)
+![MSRV](https://img.shields.io/badge/rustc-1.75+-blue.svg)
 [![Build Status](https://github.com/eldruin/veml6030-rs/workflows/Build/badge.svg)](https://github.com/eldruin/veml6030-rs/actions?query=workflow%3ABuild)
 [![Coverage Status](https://coveralls.io/repos/github/eldruin/veml6030-rs/badge.svg?branch=master)](https://coveralls.io/github/eldruin/veml6030-rs?branch=master)
 
@@ -72,6 +73,11 @@ fn main() {
 
 For questions, issues, feature requests, and other changes, please file an
 [issue in the github project](https://github.com/eldruin/veml6030-rs/issues).
+
+## Minimum Supported Rust Version (MSRV)
+
+This crate is guaranteed to compile on stable Rust 1.75 and up. It *might*
+compile with older versions but that may change in any new patch release.
 
 ## License
 
