@@ -1,4 +1,4 @@
-use embedded_hal_mock::i2c::Transaction as I2cTrans;
+use embedded_hal_mock::eh1::i2c::Transaction as I2cTrans;
 use veml6030::{
     FaultCount as FC, Gain, IntegrationTime as IT, InterruptStatus, PowerSavingMode as PSM,
 };
@@ -14,14 +14,19 @@ fn can_create_and_destroy() {
 
 macro_rules! set_test {
     ($name:ident, $method:ident, $register:ident, $value:expr $(, $arg:expr)*) => {
-        #[test]
-        fn $name() {
+        #[maybe_async_cfg::maybe(
+            sync(cfg(not(feature = "async"))),
+            async(feature = "async", keep_self)
+        )]
+        #[cfg_attr(feature = "async", tokio::test)]
+        #[cfg_attr(not(feature = "async"), test)]
+        async fn $name() {
             let transactions = [I2cTrans::write(
                 DEV_ADDR,
                 vec![Reg::$register, $value as u8, ($value >> 8) as u8],
             )];
             let mut sensor = new(&transactions);
-            sensor.$method($($arg),*).unwrap();
+            sensor.$method($($arg),*).await.unwrap();
             destroy(sensor);
         }
     };
@@ -116,15 +121,20 @@ set_test!(disable_psm, disable_power_saving, PSM, 0);
 
 macro_rules! get_test {
     ($name:ident, $method:ident, $register:ident, $value:expr, $expected:expr) => {
-        #[test]
-        fn $name() {
+        #[maybe_async_cfg::maybe(
+            sync(cfg(not(feature = "async"))),
+            async(feature = "async", keep_self)
+        )]
+        #[cfg_attr(feature = "async", tokio::test)]
+        #[cfg_attr(not(feature = "async"), test)]
+        async fn $name() {
             let transactions = [I2cTrans::write_read(
                 DEV_ADDR,
                 vec![Reg::$register],
                 vec![$value as u8, ($value >> 8) as u8],
             )];
             let mut sensor = new(&transactions);
-            let result = sensor.$method().unwrap();
+            let result = sensor.$method().await.unwrap();
             assert_eq!($expected, result);
             destroy(sensor);
         }
@@ -176,8 +186,13 @@ get_test!(read_white, read_white, WHITE, 0xABCD_u16, 0xABCD);
 
 macro_rules! read_lux_test {
     ($name:ident, $it:ident, $gain:ident, $config1:expr, $config2:expr, $als:expr, $expected:expr) => {
-        #[test]
-        fn $name() {
+        #[maybe_async_cfg::maybe(
+            sync(cfg(not(feature = "async"))),
+            async(feature = "async", keep_self)
+        )]
+        #[cfg_attr(feature = "async", tokio::test)]
+        #[cfg_attr(not(feature = "async"), test)]
+        async fn $name() {
             let transactions = [
                 I2cTrans::write(
                     DEV_ADDR,
@@ -194,9 +209,9 @@ macro_rules! read_lux_test {
                 ),
             ];
             let mut sensor = new(&transactions);
-            sensor.set_integration_time(IT::$it).unwrap();
-            sensor.set_gain(Gain::$gain).unwrap();
-            let result = sensor.read_lux().unwrap();
+            sensor.set_integration_time(IT::$it).await.unwrap();
+            sensor.set_gain(Gain::$gain).await.unwrap();
+            let result = sensor.read_lux().await.unwrap();
             assert!($expected - 0.5 < result);
             assert!($expected + 0.5 > result);
             destroy(sensor);
@@ -287,8 +302,13 @@ set_test!(low_th_lux, set_low_threshold_lux, ALS_WL, 1480_u16, 85.248);
 
 macro_rules! set_th_test {
     ($name:ident, $method:ident, $register:ident) => {
-        #[test]
-        fn $name() {
+        #[maybe_async_cfg::maybe(
+            sync(cfg(not(feature = "async"))),
+            async(feature = "async", keep_self)
+        )]
+        #[cfg_attr(feature = "async", tokio::test)]
+        #[cfg_attr(not(feature = "async"), test)]
+        async fn $name() {
             let config1 = CFG_DEFAULT | (0b1100 << 6);
             let config2 = config1 | 2 << 11;
             let als_raw = 1479;
@@ -307,9 +327,9 @@ macro_rules! set_th_test {
                 ),
             ];
             let mut sensor = new(&transactions);
-            sensor.set_integration_time(IT::Ms25).unwrap();
-            sensor.set_gain(Gain::OneEighth).unwrap();
-            sensor.$method(3183.247).unwrap();
+            sensor.set_integration_time(IT::Ms25).await.unwrap();
+            sensor.set_gain(Gain::OneEighth).await.unwrap();
+            sensor.$method(3183.247).await.unwrap();
             destroy(sensor);
         }
     };

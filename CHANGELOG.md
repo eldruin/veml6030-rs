@@ -11,8 +11,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 
 - The `IntegrationTime` enum now has `as_ms` and `as_us` methods
+- `async` support via the `maybe-async-cfg` crate and `embedded-hal-async`.
 
 ### Changed
+
+- Bump `embedded-hal` to 1.0.0
+- Bump `libm` to 0.2
+- Bump `linux-embedded-hal` to 0.4
 
 - Upgrade MSRV to 1.75.0
 

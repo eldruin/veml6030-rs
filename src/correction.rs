@@ -1,7 +1,4 @@
 use crate::{Gain, IntegrationTime};
-// necessary only for targets without math function implementation
-#[allow(unused_imports)]
-use libm::F64Ext;
 
 /// Calculate raw value for threshold applying compensation if necessary.
 ///
@@ -51,99 +48,35 @@ fn inverse_high_lux_correction(lux: f64) -> f64 {
     // This runs into underflow/overlow issues if trying to solve it directly.
     // However, it can be solved for unknown coefficients and then
     // we put in the values.
-    -C2 / (4.0 * C3)
-        - (C2.powf(2.0) / (4.0 * C3.powf(2.0)) - (2.0 * C1) / (3.0 * C3)
-            + (2.0_f64.powf(1.0 / 3.0) * (C1.powf(2.0) - 3.0 * C2 * C0 - 12.0 * C3 * lux))
-                / (3.0
-                    * C3
-                    * (2.0 * C1.powf(3.0) - 9.0 * C2 * C1 * C0 + 27.0 * C3 * C0.powf(2.0)
-                        - 27.0 * C2.powf(2.0) * lux
-                        + 72.0 * C3 * C1 * lux
-                        + (-4.0 * (C1.powf(2.0) - 3.0 * C2 * C0 - 12.0 * C3 * lux).powf(3.0)
-                            + (2.0 * C1.powf(3.0) - 9.0 * C2 * C1 * C0
-                                + 27.0 * C3 * C0.powf(2.0)
-                                - 27.0 * C2.powf(2.0) * lux
-                                + 72.0 * C3 * C1 * lux)
-                                .powf(2.0))
-                        .sqrt())
-                    .powf(1.0 / 3.0))
-            + (2.0 * C1.powf(3.0) - 9.0 * C2 * C1 * C0 + 27.0 * C3 * C0.powf(2.0)
-                - 27.0 * C2.powf(2.0) * lux
-                + 72.0 * C3 * C1 * lux
-                + (-4.0 * (C1.powf(2.0) - 3.0 * C2 * C0 - 12.0 * C3 * lux).powf(3.0)
-                    + (2.0 * C1.powf(3.0) - 9.0 * C2 * C1 * C0 + 27.0 * C3 * C0.powf(2.0)
-                        - 27.0 * C2.powf(2.0) * lux
-                        + 72.0 * C3 * C1 * lux)
-                        .powf(2.0))
-                .sqrt())
-            .powf(1.0 / 3.0)
-                / (3.0 * 2.0_f64.powf(1.0 / 3.0) * C3))
-            .sqrt()
-            / 2.0
-        + (C2.powf(2.0) / (2.0 * C3.powf(2.0))
+    let base_expr = 2.0 * libm::pow(C1, 3.0) - 9.0 * C2 * C1 * C0 + 27.0 * C3 * libm::pow(C0, 2.0)
+        - 27.0 * libm::pow(C2, 2.0) * lux
+        + 72.0 * C3 * C1 * lux;
+    let inner_expr = libm::pow(C1, 2.0) - 3.0 * C2 * C0 - 12.0 * C3 * lux;
+    let sqrt_expr = libm::sqrt(-4.0 * libm::pow(inner_expr, 3.0) + libm::pow(base_expr, 2.0));
+    let cube_root_expr = libm::pow(base_expr + sqrt_expr, 1.0 / 3.0);
+    let first_term = -C2 / (4.0 * C3);
+    let second_term = -libm::sqrt(
+        libm::pow(C2, 2.0) / (4.0 * libm::pow(C3, 2.0)) - (2.0 * C1) / (3.0 * C3)
+            + (libm::pow(2.0, 1.0 / 3.0) * inner_expr) / (3.0 * C3 * cube_root_expr)
+            + cube_root_expr / (3.0 * libm::pow(2.0, 1.0 / 3.0) * C3),
+    ) / 2.0;
+    let third_term = libm::sqrt(
+        libm::pow(C2, 2.0) / (2.0 * libm::pow(C3, 2.0))
             - (4.0 * C1) / (3.0 * C3)
-            - (2.0_f64.powf(1.0 / 3.0) * (C1.powf(2.0) - 3.0 * C2 * C0 - 12.0 * C3 * lux))
-                / (3.0
-                    * C3
-                    * (2.0 * C1.powf(3.0) - 9.0 * C2 * C1 * C0 + 27.0 * C3 * C0.powf(2.0)
-                        - 27.0 * C2.powf(2.0) * lux
-                        + 72.0 * C3 * C1 * lux
-                        + (-4.0 * (C1.powf(2.0) - 3.0 * C2 * C0 - 12.0 * C3 * lux).powf(3.0)
-                            + (2.0 * C1.powf(3.0) - 9.0 * C2 * C1 * C0
-                                + 27.0 * C3 * C0.powf(2.0)
-                                - 27.0 * C2.powf(2.0) * lux
-                                + 72.0 * C3 * C1 * lux)
-                                .powf(2.0))
-                        .sqrt())
-                    .powf(1.0 / 3.0))
-            - (2.0 * C1.powf(3.0) - 9.0 * C2 * C1 * C0 + 27.0 * C3 * C0.powf(2.0)
-                - 27.0 * C2.powf(2.0) * lux
-                + 72.0 * C3 * C1 * lux
-                + (-4.0 * (C1.powf(2.0) - 3.0 * C2 * C0 - 12.0 * C3 * lux).powf(3.0)
-                    + (2.0 * C1.powf(3.0) - 9.0 * C2 * C1 * C0 + 27.0 * C3 * C0.powf(2.0)
-                        - 27.0 * C2.powf(2.0) * lux
-                        + 72.0 * C3 * C1 * lux)
-                        .powf(2.0))
-                .sqrt())
-            .powf(1.0 / 3.0)
-                / (3.0 * 2.0_f64.powf(1.0 / 3.0) * C3)
-            - (-(C2.powf(3.0) / C3.powf(3.0)) + (4.0 * C2 * C1) / C3.powf(2.0) - (8.0 * C0) / C3)
+            - (libm::pow(2.0, 1.0 / 3.0) * inner_expr) / (3.0 * C3 * cube_root_expr)
+            - cube_root_expr / (3.0 * libm::pow(2.0, 1.0 / 3.0) * C3)
+            - (-(libm::pow(C2, 3.0) / libm::pow(C3, 3.0)) + (4.0 * C2 * C1) / libm::pow(C3, 2.0)
+                - (8.0 * C0) / C3)
                 / (4.0
-                    * (C2.powf(2.0) / (4.0 * C3.powf(2.0)) - (2.0 * C1) / (3.0 * C3)
-                        + (2.0_f64.powf(1.0 / 3.0)
-                            * (C1.powf(2.0) - 3.0 * C2 * C0 - 12.0 * C3 * lux))
-                            / (3.0
-                                * C3
-                                * (2.0 * C1.powf(3.0) - 9.0 * C2 * C1 * C0
-                                    + 27.0 * C3 * C0.powf(2.0)
-                                    - 27.0 * C2.powf(2.0) * lux
-                                    + 72.0 * C3 * C1 * lux
-                                    + (-4.0
-                                        * (C1.powf(2.0) - 3.0 * C2 * C0 - 12.0 * C3 * lux)
-                                            .powf(3.0)
-                                        + (2.0 * C1.powf(3.0) - 9.0 * C2 * C1 * C0
-                                            + 27.0 * C3 * C0.powf(2.0)
-                                            - 27.0 * C2.powf(2.0) * lux
-                                            + 72.0 * C3 * C1 * lux)
-                                            .powf(2.0))
-                                    .sqrt())
-                                .powf(1.0 / 3.0))
-                        + (2.0 * C1.powf(3.0) - 9.0 * C2 * C1 * C0 + 27.0 * C3 * C0.powf(2.0)
-                            - 27.0 * C2.powf(2.0) * lux
-                            + 72.0 * C3 * C1 * lux
-                            + (-4.0
-                                * (C1.powf(2.0) - 3.0 * C2 * C0 - 12.0 * C3 * lux).powf(3.0)
-                                + (2.0 * C1.powf(3.0) - 9.0 * C2 * C1 * C0
-                                    + 27.0 * C3 * C0.powf(2.0)
-                                    - 27.0 * C2.powf(2.0) * lux
-                                    + 72.0 * C3 * C1 * lux)
-                                    .powf(2.0))
-                            .sqrt())
-                        .powf(1.0 / 3.0)
-                            / (3.0 * 2.0_f64.powf(1.0 / 3.0) * C3))
-                        .sqrt()))
-        .sqrt()
-            / 2.0
+                    * libm::sqrt(
+                        libm::pow(C2, 2.0) / (4.0 * libm::pow(C3, 2.0)) - (2.0 * C1) / (3.0 * C3)
+                            + (libm::pow(2.0, 1.0 / 3.0) * inner_expr)
+                                / (3.0 * C3 * cube_root_expr)
+                            + cube_root_expr / (3.0 * libm::pow(2.0, 1.0 / 3.0) * C3),
+                    )),
+    ) / 2.0;
+
+    first_term + second_term + third_term
 }
 
 #[cfg(test)]
