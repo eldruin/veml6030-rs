@@ -18,7 +18,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Bump `embedded-hal` to 1.0.0
 - Bump `libm` to 0.2
 - Bump `linux-embedded-hal` to 0.4
-
 - Upgrade MSRV to 1.75.0
 
 ## [0.1.1] - 2019-12-21
